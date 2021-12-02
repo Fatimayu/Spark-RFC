@@ -1,0 +1,70 @@
+<project name="TrainML" default="build" basedir=".">
+  <path id="org.apache.spark.classpath">
+    <fileset dir="./lib" includes="**/*.jar"/>
+    <fileset dir="./third-party" includes="**/*.jar"/>
+    <pathelement location="lib"/>
+    <pathelement location="."/>
+  </path>
+<pathconvert property="manifest.classpath" pathsep=" ">
+  <path refid="org.apache.spark.classpath"/>
+  <mapper>
+    <chainedmapper>
+       <flattenmapper/>
+       <globmapper from="*.jar" to="lib/*.jar"/>
+    </chainedmapper>
+  </mapper>
+</pathconvert>
+    
+    
+
+  <target name="build">
+  <javac 
+         memoryMaximumSize="5000m" memoryInitialSize="800m"
+         debug="true"
+    includeantruntime="false"
+    srcdir="."
+    destdir="."
+    classpathref="org.apache.spark.classpath"/>
+  </target>
+
+  <target name="train" depends="build">
+    <java classname="TrainML" classpathref="org.apache.spark.classpath" fork="true"/>
+    </target>
+    <target name="jar" >
+
+
+		<jar jarfile="./TrainML.jar" basedir=".">
+             
+			<manifest>
+				<attribute name="Main-Class" value="TrainML" />
+                <attribute name="Class-Path" value="${manifest.classpath}"/>
+			</manifest>
+		
+		</jar>
+        
+	<jar jarfile="./MakePrediction.jar" basedir=".">
+             
+			<manifest>
+				<attribute name="Main-Class" value="MakePrediction" />
+                <attribute name="Class-Path" value="${manifest.classpath}"/>
+			</manifest>
+		
+		</jar>
+
+	</target>
+    
+  <target name="predict" depends="build">
+    <java classname="MakePrediction" classpathref="org.apache.spark.classpath" fork="true"/>
+    </target>
+
+
+
+  <!--  <target name="jar" depedds="compile, copy-dependencies">
+        
+    <jar destfile="train-cluster-job.jar" basedir=".">
+         <zipgroupfileset dir="./lib" includes="*.jar"/>
+
+    </jar>
+</target>-->
+    
+</project>
