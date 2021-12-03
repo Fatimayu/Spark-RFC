@@ -14,7 +14,7 @@ RUN mkdir predictML/lib
 ENV ANT_HOME /opt/ant
 ENV PATH ${PATH}:/opt/ant/bin
 
-COPY TrainML.jar ./predictML/
+# COPY TrainML.jar ./predictML/
 COPY ValidationDataset.csv ./predictML/
 COPY TrainingDataset.csv ./predictML/
 COPY build.xml ./predictML/
